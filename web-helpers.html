@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dev Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <nav class="w-1/6 bg-gray-800 text-white p-4">
+        <h1 class="text-xl font-bold mb-4">Dev Tools</h1>
+        <ul>
+            <li><a href="color-previewer.html" class="block py-2 px-4 hover:bg-gray-700">Color Preview</a></li>
+            <li><a href="coming-soon.html" class="block py-2 px-4 hover:bg-gray-700">Other Tool</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-6">
+        <iframe id="content-frame" class="w-full h-full border-0"></iframe>
+    </div>
+
+    <script>
+        const contentFrame = document.getElementById('content-frame');
+
+        // Load `color-preview.html` by default or based on the hash value
+        const initialPage = window.location.hash ? window.location.hash.substring(1) : 'color-previewer.html';
+        contentFrame.src = initialPage;
+
+        // Handle link clicks
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('href');
+                contentFrame.src = page;
+                window.location.hash = page; // Update URL hash for bookmarking
+            });
+        });
+
+        // Update iframe on back/forward navigation
+        window.addEventListener('hashchange', () => {
+            contentFrame.src = window.location.hash.substring(1);
+        });
+    </script>
+</body>
+</html>
