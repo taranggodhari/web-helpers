@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Previewer</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        textarea { width: 80%; height: 100%; padding: 10px; box-sizing: border-box; }
+        .color-preview { display: flex; flex-direction: column; gap: 5px; margin-top: 10px;}
+        .color-line { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+        .color-box { width: 20px; height: 20px; border: 1px solid #000; }
+        .copy-btn { background-color: #3CBEFF; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .copy-btn:hover { background-color: #7BD3FF; }
+        .wrapper {display: flex; flex-direction: row; justify-content: space-around; max-height: 80vh;}
+		.input-wrapper,.preview-wrapper {display: flex; flex-direction: column; align-items: center; width: 50%; overflow-y: auto;}
+        .toggle { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Color Preview Editor</h2>
+    <div class="wrapper">
+		<div class="input-wrapper">
+			<textarea id="editor" placeholder="Paste your color codes here..."></textarea>
+			<label class="toggle">
+				<input type="checkbox" id="toggle-checkbox" checked>
+				Show Hex Only
+			</label>
+		</div>
+		<div class="preview-wrapper">
+			<div class="color-preview" id="color-preview"></div>
+		</div>
+        
+    </div>
+<script>
+    const editor = document.getElementById('editor');
+    const colorPreview = document.getElementById('color-preview');
+    const toggleCheckbox = document.getElementById('toggle-checkbox');
+
+    editor.addEventListener('input', updatePreview);
+    toggleCheckbox.addEventListener('change', updatePreview);
+
+    function updatePreview() {
+        const content = editor.value;
+        const colorRegex = /(\$[\w-]+:\s*)(#(?:[0-9a-fA-F]{3}){1,2}|rgb\((?:\d{1,3},\s*){2}\d{1,3}\))/g;
+
+        const matches = content.matchAll(colorRegex) || [];
+        colorPreview.innerHTML = '';
+
+        for (const match of matches) {
+            const colorLine = document.createElement('div');
+            colorLine.className = 'color-line';
+
+            const colorBox = document.createElement('div');
+            colorBox.className = 'color-box';
+            colorBox.style.backgroundColor = match[2];
+
+            const colorText = document.createElement('span');
+            colorText.textContent = toggleCheckbox.checked 
+                ?  `${match[2]} `
+                : `${match[1]}${match[2]}`;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = 'Copy';
+            copyBtn.onclick = () => navigator.clipboard.writeText(match[2]);
+
+            colorLine.append(colorBox, colorText, copyBtn);
+            colorPreview.appendChild(colorLine);
+        }
+    }
+</script>
+</body>
+</html>
